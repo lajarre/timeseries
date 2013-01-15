@@ -38,7 +38,7 @@ var rowDataGetter = function(type) {
     for (var i = 0; i < l; ++i) {
       var data_type = DATA_TYPES[type][i];
       if (data_type == DATE_TYPE)
-        result.push(Date.parse(splitted[i]));
+        result.push(splitted[i]);         // Dates are kept as strings.
       else if (data_type == INT_TYPE)
         result.push(parseInt(splitted[i]));
       else if (data_type == FLOAT_TYPE)
@@ -58,7 +58,7 @@ var rowDataGetter = function(type) {
  * @param {string} end The end date in a Data.parse() readable format.
  * @param {function(object)} callback Takes an object and renders it
  *     through expressjs. If no error occured, the object has the
- *     form {date: [], header1: [], header2: [], ...}.
+ *     form {'Date': [], 'header1': [], 'header2': [], ...}.
  */
 var parseCSV = function (type, start, end, callback) {
   try {
@@ -89,7 +89,7 @@ var parseCSV = function (type, start, end, callback) {
           }
           else {
             var row_data = getRowData(linebuf.toString());
-            var date = row_data[0];
+            var date = Date.parse(row_data[0]);
             if (start_date <= date && date < end_date) {
               for (var i = 0, l = row_data.length; i < l; ++i) {
                 columns[header[i]].push(row_data[i]);
