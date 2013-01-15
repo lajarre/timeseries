@@ -1,0 +1,10 @@
+{
+  "name": "nitrog_timeseries",
+  "description": "Nitrogram exercise app for time series",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "express": "3.x",
+	"lazy": "1.x"
+  }
+}
