@@ -112,7 +112,6 @@ app.get('/', function(req, res){
 
 app.get('/time_series', function(req, res) {
 	parseCSV(req.query.type, req.query.start, req.query.end, function (body) {
-		console.log('callbas');
 		//res.setHeader('Content-Type', 'application/json');
 		//res.setHeader('Content-Length', body.length);
 		res.send(body);
