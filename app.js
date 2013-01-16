@@ -1,7 +1,5 @@
 // File operations
 
-console.log('load module app.js');
-
 var Lazy = require('lazy'),
     fs = require('fs');
 
@@ -110,7 +108,10 @@ var express = require('express');
 var app = express();
 
 app.get('/', function(req, res){
-  res.send('hello world');
+  res.send('<html> <body>Welcome:<br /> <ul>' + 
+    '<li> <a href="/time_series?type=FR&start=01/01/2013&end=01/15/2013">Time Series</a> </li>' + 
+    '<li> <a href="/app">Angular app</a> </li>' +
+    '</ul> </body> </html>');
 });
 
 app.get('/time_series', function(req, res) {
@@ -119,5 +120,9 @@ app.get('/time_series', function(req, res) {
     res.end();
   });
 });
+
+// Directory serve for Angular app
+app.use('/app', express.directory('app'));
+app.use('/app', express.static(__dirname + '/app'));
 
 app.listen(3000);
