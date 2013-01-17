@@ -1,6 +1,7 @@
 // File operations
 
 var Lazy = require('lazy'),
+    util = require('util'),
     fs = require('fs');
 
 // Globals
@@ -73,7 +74,7 @@ var parseCSV = function (type, start, end, callback) {
     else {
       new Lazy(fs.createReadStream(file_name))
         .on('end', function () {
-          console.log(columns);
+          util.debug(columns);
           return callback(columns);
         })
       .lines
@@ -97,7 +98,7 @@ var parseCSV = function (type, start, end, callback) {
         });
     }
   } catch (e) {
-    console.log(e);
+    util.debug(e);
     callback(400); // Bad request
   }
 };
@@ -107,12 +108,12 @@ var parseCSV = function (type, start, end, callback) {
 var express = require('express');
 var app = express();
 
-app.get('/', function(req, res){
-  res.send('<html> <body>Welcome:<br /> <ul>' + 
-    '<li> <a href="/time_series?type=FR&start=01/01/2013&end=01/15/2013">Time Series</a> </li>' + 
-    '<li> <a href="/app">Angular app</a> </li>' +
-    '</ul> </body> </html>');
-});
+//app.get('/', function(req, res){
+//  res.send('<html> <body>Welcome:<br /> <ul>' + 
+//    '<li> <a href="/time_series?type=FR&start=01/01/2013&end=01/15/2013">Time Series</a> </li>' + 
+//    '<li> <a href="/app">Angular app</a> </li>' +
+//    '</ul> </body> </html>');
+//});
 
 app.get('/time_series', function(req, res) {
   parseCSV(req.query.type, req.query.start, req.query.end, function (body) {
@@ -122,7 +123,7 @@ app.get('/time_series', function(req, res) {
 });
 
 // Directory serve for Angular app
-app.use('/app', express.directory('app'));
-app.use('/app', express.static(__dirname + '/app'));
+//app.use('/', express.directory('.'));
+app.use(express.static(__dirname + '/angular_app'));
 
 app.listen(3000);
