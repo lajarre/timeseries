@@ -29,7 +29,7 @@ var getHeader = function (line) {
  * @param {string} type The type of the data requested.
  * @return {function (string): Array()} Function used to parse lines.
  */
-var rowDataGetter = function(type) {
+var getRowDataFactory = function(type) {
   return function (line) {
     var splitted = line.trim().split(DELIM);
     var l = splitted.length,
@@ -37,7 +37,7 @@ var rowDataGetter = function(type) {
     for (var i = 0; i < l; ++i) {
       var data_type = DATA_TYPES[type][i];
       if (data_type == DATE_TYPE)
-        result.push(splitted[i]);         // Dates are kept as strings.
+        result.push(Date.parse(splitted[i])); // Int (ms since epoch)
       else if (data_type == INT_TYPE)
         result.push(parseInt(splitted[i]));
       else if (data_type == FLOAT_TYPE)
@@ -67,14 +67,14 @@ var parseCSV = function (type, start, end, callback) {
         first_line = true,                // flag
         header = {},
         columns = {},                     // To be passed to callback.
-        getRowData = rowDataGetter(type);
+        getRowData = getRowDataFactory(type);
     // Test file existence
     if (!fs.statSync(file_name).isFile()) // Throws if no path on filesystem.
       throw new Error(400);               // Throws if path exists but not a file.
     else {
       new Lazy(fs.createReadStream(file_name))
         .on('end', function () {
-          util.debug(columns);
+          // util.debug(columns.toString());
           return callback(columns);
         })
       .lines
@@ -88,7 +88,7 @@ var parseCSV = function (type, start, end, callback) {
           }
           else {
             var row_data = getRowData(linebuf.toString());
-            var date = Date.parse(row_data[0]);
+            var date = row_data[0];
             if (start_date <= date && date < end_date) {
               for (var i = 0, l = row_data.length; i < l; ++i) {
                 columns[header[i]].push(row_data[i]);
@@ -98,7 +98,7 @@ var parseCSV = function (type, start, end, callback) {
         });
     }
   } catch (e) {
-    util.debug(e);
+    util.debug(e.message);
     callback(400); // Bad request
   }
 };
