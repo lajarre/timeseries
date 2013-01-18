@@ -59,11 +59,9 @@ var getRowDataFactory = function(type) {
  *     through expressjs. If no error occured, the object has the
  *     form {'Date': [], 'header1': [], 'header2': [], ...}.
  */
-var parseCSV = function (type, start, end, callback) {
+var parseCSV = function (type, start_date, end_date, callback) {
   try {
     var file_name = DATA_FOLDER + type + '.csv',
-        start_date = Date.parse(start),
-        end_date = Date.parse(end),
         first_line = true,                // flag
         header = {},
         columns = {},                     // To be passed to callback.
@@ -116,6 +114,19 @@ var app = express();
 //});
 
 app.get('/time_series', function(req, res) {
+
+  util.debug(req.url);
+
+  // Modifies date if written not as integer format
+  var dateCheck = function (date) {
+    if (parseInt(date) != date)
+      return Date.parse(date);
+    else
+      return date;
+  }
+  var start_date = dateCheck(req.query.start),
+      end_date = dateCheck(req.query.end);
+
   parseCSV(req.query.type, req.query.start, req.query.end, function (body) {
     res.json(body);
     res.end();
