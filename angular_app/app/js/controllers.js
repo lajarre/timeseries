@@ -22,10 +22,12 @@ function GraphCtrl ($scope, $http, TimeseriesGET) {
     // Store relevant values in data for later access
     data._N = data.Date.length;
     //data._date_property = date_property;
-    var date0 = new Date(data.Date[data._N - 1]);
-    var dateN = new Date(data.Date[0]);
-    data._days = Math.floor((dateN - date0) / 86400000) + 1;
-    
+    data._keys  = [];           // Non 'Date' properties, neither special ones
+    for (var k in data) {
+      if (k !== "Date" && /^[a-zA-Z]\w*/.test(k))
+        data._keys.push({name: k, selected: true});
+    }
+
     return true;
   };
   
@@ -38,8 +40,12 @@ function GraphCtrl ($scope, $http, TimeseriesGET) {
       console.log(data);
       if (checkData(data)) {
         $scope.data = data;
+        $scope.data_selection = data;
         // Clear the error messages
         $scope.error = '';
+        // Update checkboxes
+        for (var i = 0, l = $scope.data._keys.length; i < l; ++i)
+          $scope.data._keys[i]['selected'] = true;
       }
       else {
         $scope.error = "Bad response from the server.";
@@ -51,20 +57,37 @@ function GraphCtrl ($scope, $http, TimeseriesGET) {
     });
   };
 
+  // When form submitted
   $scope.fetchTimeseries = function () {
     GETTimeseries($scope.type,
       Date.parse($scope.start_date),
       Date.parse($scope.end_date)
     );
   };
-  
-  // Let's do it!
   // Defaults
   $scope.type = 'MCL';
   $scope.start_date = '1/1/2013';
   $scope.end_date = '1/13/2013';
-
+  // Let's do it in the beginning!
   $scope.fetchTimeseries();
         
+  // When checkboxes
+  $scope.updateSelection = function (name, was_selected) {
+    //Index
+    var i = $scope.data_selection._keys.map(function (d) {
+      return d.name;
+    });
+    $scope.data_selection._keys[i] = !was_selected;
+  
+  //var new_selection = {'Date': $scope.data['Date']};
+  //for (var i = 0, l = $scope.data._keys.length; i < l; ++i) {
+  //  if ($scope.data._keys[i].selected)
+  //    new_selection[$scope.data._keys[i].name] = $scope.data[$scope.data._keys[i].name];
+  //}
+  //console.log('new selection');
+  //console.log(new_selection);
+  //$scope.data_selection = new_selection;
+  };
 }
 GraphCtrl.$inject = ['$scope', '$http', 'TimeseriesGET'];
+

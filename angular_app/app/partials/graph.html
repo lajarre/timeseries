@@ -69,5 +69,14 @@
 
     <p class="error">{{error}}</p>
 
-    <gh-visualization val="data"></gh-visualization>
+
+    <div>
+        <ul>
+            <li ng-repeat="column in data._keys">
+                <input type="checkbox" ng-model="column.selected" ng-click="updateSelection(column.name, column.selected)"/> {{column.name}}
+            </li>
+        </ul>
+    </div>
+
+    <gh-visualization val="data_selection"></gh-visualization>
 </div>

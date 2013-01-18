@@ -48,7 +48,7 @@ angular.module('timeseriesApp.directives', []).
           .append("g")
           .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-        scope.$watch('val', function (val, oldVal) {
+        scope.$watch('val', function (val) {
 
           // Clear the elements inside of the directive
           svg.selectAll('*').remove();
@@ -77,11 +77,27 @@ angular.module('timeseriesApp.directives', []).
           //console.log(string_dates); 
 
           // Domains
-          var val_keys = d3.keys(val).filter(function(key) {
-            // Pay attention to Date and other properties of the Angular
-            // Resource object!
-            return key !== "Date" && /^[a-zA-Z]\w*/.test(key);
-          });
+          //var val_keys = d3.keys(val).filter(function(key) {
+          //  // Pay attention to Date and other properties of the Angular
+          //  // Resource object!
+          //  return key !== "Date" && /^[a-zA-Z]\w*/.test(key);
+          //});
+          //var val_keys = val._keys.map(function (d) {
+          //  if (d.selected) {
+          //    console.log(d);
+          //    return d.name;
+          //  }
+          //});
+          var val_keys = (function () {
+            var r = [];
+            for (var i = 0, l = val._keys.length; i < l; ++i) {
+              if (val._keys[i].selected)
+                r.push(val._keys[i].name);
+            }
+            return r;
+          })();
+          console.log('val_keys');
+          console.log(val_keys);
           var nb_keys = val_keys.length;
           color.domain(val_keys);
           x.domain(d3.extent(dates));
@@ -145,7 +161,7 @@ angular.module('timeseriesApp.directives', []).
             .attr('x', 3)
             .attr('dy', '.35em')
             .text(function (d) { return d.name; });
-        });
+        }, true);
       }
     }
   });
