@@ -1,7 +1,7 @@
 timeseries
 ==========
 
-CSV times series served through express (for angular).
+CSV times series, expressjs => angular => d3 => svg.
 
 How it works
 ---
@@ -13,6 +13,10 @@ How it works
   - COMPFR: idem for the competition.
 
 Every time series has a step of 1 day.
+CSV files must comply with the following:
+  - There must be a header line
+  - There must be date column, named 'Date' in the header (case-sensitive), with dates written either in a Date.parse() compliant way
+  - The other columns must be have names made of alphanumeric characters and underscores only. Data supported is only Int and Float.
 
 3 GET parameters are passed to the API:
   - type (see above)
