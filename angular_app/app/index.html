@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en" ng-app="timeseriesApp">
+<head>
+  <meta charset="utf-8">
+  <title>Time series viz</title>
+  <script src="http://d3js.org/d3.v2.js"></script>
+  <link rel="stylesheet" href="css/app.css"/>
+</head>
+<body>
+<!--
+  <ul class="menu">
+    <li><a href="#/view2">view2</a></li>
+  </ul>
+-->
+
+  <div ng-view></div>
+
+  <!-- In production use:
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.2/angular.min.js"></script>
+  -->
+  <script src="lib/angular/angular.js"></script>
+  <script src="lib/angular/angular-resource.js"></script> 
+  <script src="js/app.js"></script>
+  <script src="js/services.js"></script>
+  <script src="js/controllers.js"></script>
+  <script src="js/filters.js"></script>
+  <script src="js/directives.js"></script>
+</body>
+</html>
