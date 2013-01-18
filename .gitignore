@@ -1,5 +1,6 @@
 .DS_Store
 .swp
+.vim
 
 lib-cov
 *.seed
