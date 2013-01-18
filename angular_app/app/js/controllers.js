@@ -6,17 +6,16 @@
 function GraphCtrl ($scope, $http, TimeseriesGET) {
 
   var checkData = function (data) {
-    // Get 'date' column
-    //Bug with the following code: "property is undefined"
+    // XXX We could do some inconsistency checking
+    //// Get 'date' column
     //var date_property = '';
-    //for (property in data) {
+    //for (var property in data) {
     //  console.log(property);
-    //  if (property.toLowerCase() == 'date')
+    //  if (property.toLowerCase() === 'date')
     //    date_property = property;
     //}
     //if (date_property == '')
     //  return false;
-    // XXX We could do some more inconsistency checking
     if (typeof data.Date === 'undefined')
       return false;
 
@@ -38,26 +37,34 @@ function GraphCtrl ($scope, $http, TimeseriesGET) {
       console.log('data:');
       console.log(data);
       if (checkData(data)) {
-        $scope.data =  data;
+        $scope.data = data;
         // Clear the error messages
         $scope.error = '';
       }
-      else
-        $scope.error = "Data error: data not in the format {'date': [], 'header1': [], ...}";
+      else {
+        $scope.error = "Bad response from the server.";
+        //$scope.error = "Data error: data not in the format {'Date': [], 'header1': [], ...}";
+      }
     }, function (data, status) {
       console.log(data);
       $scope.error = 'Fetch error: ' + status;
     });
   };
 
-  // Get the timeseries TODO
-  //$scope.GETTimeseries('MCL', 1356994800000, 1358636400000);
   $scope.fetchTimeseries = function () {
     GETTimeseries($scope.type,
       Date.parse($scope.start_date),
       Date.parse($scope.end_date)
     );
   };
+  
+  // Let's do it!
+  // Defaults
+  $scope.type = 'MCL';
+  $scope.start_date = '1/1/2013';
+  $scope.end_date = '1/13/2013';
+
+  $scope.fetchTimeseries();
         
 }
 GraphCtrl.$inject = ['$scope', '$http', 'TimeseriesGET'];

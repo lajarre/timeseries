@@ -1,3 +1,5 @@
+// Structure inspired from http://briantford.com/blog/angular-d3.html
+
 'use strict';
 
 
