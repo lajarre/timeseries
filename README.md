@@ -18,9 +18,11 @@ CSV files must comply with the following:
   - There must be date column, named 'Date' in the header (case-sensitive), with dates written either in a Date.parse() compliant way
   - The other columns must be have names made of alphanumeric characters and underscores only. Data supported is only Int and Float.
 
-3 GET parameters are passed to the API:
+2 GET endpoints:
+1) /time_series_choices => {types: [{id: , name}, ...], dates: [...]}
+2) /time_series => 3 GET parameters:
   - type (see above)
-  - start: a Date.parse()-readable string representing the first day (eg. 1/13/2013), included
+  - start: a Date()-compliant int representing the first day (ms since epoch), included
   - end: ditto, not included
 
 Returns a JSON in the following form:
@@ -37,9 +39,4 @@ To init (needs express and lazy):
 To run:
 > node app.js
 
-To test, try those urls:
-  - http://localhost:3000/time_series?type=FR&start=1/02/2013&end=1/22/2013
-  - http://localhost:3000/time_series?type=COMPFR&start=1/02/2013&end=1/20/2013
-  - http://localhost:3000/time_series?type=MCL&start=1/02/2013&end=1/12/2013
-  - http://localhost:3000/time_series?type=COMPMCL&start=1/12/2013&end=1/13/2013
-  - http://localhost:3000/time_series?type=iammakingamistake&start=1/13/2013&end=1/13/2013
+[Try it](http://localhost:3000/app/)
