@@ -1,121 +1,14 @@
-// File operations
-
-var Lazy = require('lazy'),
-    util = require('util'),
-    fs = require('fs');
-
-// Globals
-var DATA_FOLDER = 'data/',
-    DELIM = ';',
-    DATE_TYPE = 0,
-    INT_TYPE = 1,
-    FLOAT_TYPE = 2;
-var MCL_DATA = [DATE_TYPE, INT_TYPE, INT_TYPE, INT_TYPE],
-    FR_DATA = [DATE_TYPE, INT_TYPE, INT_TYPE, INT_TYPE, FLOAT_TYPE];
-var DATA_TYPES = {
-  'MCL' : MCL_DATA,
-  'COMPMCL': MCL_DATA,
-  'FR': FR_DATA,
-  'COMPFR': FR_DATA
-};
-
-var getHeader = function (line) {
-  return line.trim().split(DELIM);
-};
-
-/**
- * Depending on the type of the data, returns a function that extracts
- * line contents from a CSV file with their proper types.
- * @param {string} type The type of the data requested.
- * @return {function (string): Array()} Function used to parse lines.
- */
-var getRowDataFactory = function(type) {
-  return function (line) {
-    var splitted = line.trim().split(DELIM);
-    var l = splitted.length,
-        result = [];
-    for (var i = 0; i < l; ++i) {
-      var data_type = DATA_TYPES[type][i];
-      if (data_type == DATE_TYPE)
-        result.push(Date.parse(splitted[i])); // Int (ms since epoch)
-      else if (data_type == INT_TYPE)
-        result.push(parseInt(splitted[i]));
-      else if (data_type == FLOAT_TYPE)
-        result.push(parseFloat(splitted[i]));
-    }
-    return result;
-  };
-};
-
-/**
- * Parses the CSV file corresponding to type and extracts all data
- * from rows that are between start (included) and end (excluded)
- * dates, as columns.
- * Depends of the header of the file.
- * @param {string} type The type of the data requested.
- * @param {string} start The start date in a Data.parse() readable format.
- * @param {string} end The end date in a Data.parse() readable format.
- * @param {function(object)} callback Takes an object and renders it
- *     through expressjs. If no error occured, the object has the
- *     form {'Date': [], 'header1': [], 'header2': [], ...}.
- */
-var parseCSV = function (type, start_date, end_date, callback) {
-  try {
-    var file_name = DATA_FOLDER + type + '.csv',
-        first_line = true,                // flag
-        header = {},
-        columns = {},                     // To be passed to callback.
-        getRowData = getRowDataFactory(type);
-    // Test file existence
-    if (!fs.statSync(file_name).isFile()) // Throws if no path on filesystem.
-      throw new Error(400);               // Throws if path exists but not a file.
-    else {
-      new Lazy(fs.createReadStream(file_name))
-        .on('end', function () {
-          // util.debug(columns.toString());
-          return callback(columns);
-        })
-      .lines
-        .forEach(function (linebuf) {
-          if (first_line) {               // Header of the CSV.
-            first_line = false;
-            header = getHeader(linebuf.toString());
-            for (var i = 0; i < header.length; ++i) {
-              columns[header[i]] = [];
-            }
-          }
-          else {
-            var row_data = getRowData(linebuf.toString());
-            var date = row_data[0];
-            if (start_date <= date && date < end_date) {
-              for (var i = 0, l = row_data.length; i < l; ++i) {
-                columns[header[i]].push(row_data[i]);
-              }
-            }
-          }
-        });
-    }
-  } catch (e) {
-    util.debug(e.message);
-    callback(400); // Bad request
-  }
-};
-
-// Web server
+var csv = require('./csv.js');
 
 var express = require('express');
 var app = express();
 
-//app.get('/', function(req, res){
-//  res.send('<html> <body>Welcome:<br /> <ul>' + 
-//    '<li> <a href="/time_series?type=FR&start=01/01/2013&end=01/15/2013">Time Series</a> </li>' + 
-//    '<li> <a href="/app">Angular app</a> </li>' +
-//    '</ul> </body> </html>');
-//});
 
+// Directory serve for Angular app on '/'
+app.use(express.static(__dirname + '/angular_app'));
+
+// GET endpoint serving the time series JSONs
 app.get('/time_series', function(req, res) {
-
-  util.debug(req.url);
 
   // Modifies date if written not as integer format
   var dateCheck = function (date) {
@@ -125,16 +18,49 @@ app.get('/time_series', function(req, res) {
       return date;
   }
   var start_date = dateCheck(req.query.start),
-      end_date = dateCheck(req.query.end);
+  end_date = dateCheck(req.query.end);
 
-  parseCSV(req.query.type, req.query.start, req.query.end, function (body) {
+  csv.parseCSV(req.query.type, req.query.start, req.query.end, function (body) {
     res.json(body);
     res.end();
   });
 });
 
-// Directory serve for Angular app
-//app.use('/', express.directory('.'));
-app.use(express.static(__dirname + '/angular_app'));
+// GET for the choices available
+app.get('/time_series_choices', function (req, res) {
+  res.json({
+    types: [
+      {id: 'MCL', name: 'Messages, comments & likes'},
+      {id: 'COMPMCL', name: 'Messages, comments & likes (industry)'},
+      {id: 'FR', name: 'Followers & reach'},
+      {id: 'COMPFR', name: 'Followers & reach (industry)'}
+    ],
+    dates: [
+      '1/1/2013',
+      '1/2/2013',
+      '1/3/2013',
+      '1/4/2013',
+      '1/5/2013',
+      '1/6/2013',
+      '1/7/2013',
+      '1/8/2013',
+      '1/9/2013',
+      '1/10/2013',
+      '1/11/2013',
+      '1/12/2013',
+      '1/13/2013',
+      '1/14/2013',
+      '1/15/2013',
+      '1/16/2013',
+      '1/17/2013',
+      '1/18/2013',
+      '1/19/2013',
+      '1/20/2013',
+      '1/21/2013',
+      '1/22/2013'
+    ]
+  }); 
+  res.end();
+});
 
 app.listen(3000);
