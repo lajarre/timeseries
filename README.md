@@ -19,13 +19,16 @@ CSV files must comply with the following:
   - The other columns must be have names made of alphanumeric characters and underscores only. Data supported is only Int and Float.
 
 2 GET endpoints:
-1) /time_series_choices => {types: [{id: , name}, ...], dates: [...]}
-2) /time_series => 3 GET parameters:
+
+1) /time_series_choices
+> {types: [{id: , name}, ...], dates: [...]}
+  
+2) /time_series 
+GET parameters:
   - type (see above)
   - start: a Date()-compliant int representing the first day (ms since epoch), included
-  - end: ditto, not included
+  - end: ditto, not included 
 
-Returns a JSON in the following form:
 > {Date: [], header1: [], header2: [], ...}
 
 There are as many headers as colums in the sepecified type.
