@@ -4,7 +4,7 @@ var express = require('express');
 var app = express();
 
 
-// Directory serve for Angular app on '/'
+// Directory serve for Angular app
 app.use(express.static(__dirname + '/angular_app'));
 
 // GET endpoint serving the time series JSONs
