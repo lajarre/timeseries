@@ -66,3 +66,9 @@ h1 {
   stroke-width: 1.5px;
 }
  
+table.select-ts {
+  border-collapse:collapse;
+}
+table.select-ts td,th {
+  padding: 5px;
+}
