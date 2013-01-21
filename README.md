@@ -20,26 +20,28 @@ CSV files must comply with the following:
 
 2 GET endpoints:
 
-1) /time_series_choices
-> {types: [{id: , name}, ...], dates: [...]}
+1) `/time_series_choices`   
+=> `{types: [{id: , name}, ...], dates: [...]}`
   
-2) /time_series 
+2) `/time_series`  
 GET parameters:
   - type (see above)
   - start: a Date()-compliant int representing the first day (ms since epoch), included
-  - end: ditto, not included 
+  - end: ditto, not included   
 
-> {Date: [], header1: [], header2: [], ...}
+=> `{Date: [], header1: [], header2: [], ...}`
 
 There are as many headers as colums in the sepecified type.
 
 What to do
 ---
 
-To init (needs express and lazy):
-> npm install
+To init:
+
+`> npm install`
 
 To run:
-> node app.js
+
+`> node app.js`
 
 [Try it](http://localhost:3000/app/)
