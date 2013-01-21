@@ -83,6 +83,7 @@ function GraphCtrl ($scope, TimeseriesGET, ChoicesGET) {
    * Called when form submitted. To fetch new timeseries to plot.
    */
   $scope.fetchTimeseries = function () {
+    console.log($scope);
     GETTimeseries($scope.type,
                   Date.parse($scope.start_date),
                   Date.parse($scope.end_date)

@@ -5,19 +5,18 @@
 
     <form ng-submit="fetchTimeseries()">
         <p>Type:
-        <select ng-model="type">
-                <option ng-repeat="type in choices.types" value="{{type.id}}">{{type.name}}</option>
-        </select>
+        <select ng-model="type" ng-options="t.id as t.name for t in
+            choices.types" required></select>
         </p>
         <p>Start date:
-        <select ng-model="start_date">
-                <option ng-repeat="date in choices.dates" value="{{date}}">{{date}}</option>
+        <select ng-model="start_date" ng-options="date for date in
+            choices.dates" required></select>
         </select> 
         </p>
         <p>End date:
-        <select ng-model="end_date">
-                <option ng-repeat="date in choices.dates" value="{{date}}">{{date}}</option>
-        </select>
+        <select ng-model="end_date" ng-options="date for date in
+            choices.dates" required></select>
+        </select> 
         </p>
         <input type="submit" value="get data"></input>
     </form>
