@@ -1,6 +1,6 @@
 {
-  "name": "nitrog_timeseries",
-  "description": "Nitrogram exercise app for time series",
+  "name": "timeseries",
+  "description": "Deliver some timeseries: csv => GET endpoints with express.js => Angular => graph with d3.js",
   "version": "0.0.1",
   "private": true,
   "dependencies": {
